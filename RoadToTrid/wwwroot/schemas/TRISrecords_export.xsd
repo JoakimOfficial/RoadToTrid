@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:simpleType name="empty-string">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value=""/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="unsignedByte-or-empty">
+		<xs:union memberTypes="xs:unsignedByte empty-string"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="unsignedShort-or-empty">
+		<xs:union memberTypes="xs:unsignedShort empty-string"/>
+	</xs:simpleType>
+
+  <xs:simpleType name="unsignedInt-or-empty">
+    <xs:union memberTypes="xs:unsignedInt empty-string"/>
+  </xs:simpleType>
+
+	<xs:element name="records">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" name="record">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="accession_number" type="xs:unsignedInt"/>
+							<xs:element name="record_type" type="xs:string"/>
+							<xs:element name="record_status" type="xs:string"/>
+							<xs:element name="attributes" minOccurs="0">
+								<xs:complexType mixed="true">
+									<xs:sequence minOccurs="0">
+										<xs:element maxOccurs="unbounded" name="attribute">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+                            <xs:attribute name="name" type="xs:string" use="required"/>
+                            <xs:attribute name="display_name" type="xs:string" use="optional"/>
+                            <xs:attribute name="icon_classes" type="xs:string" use="optional"/>
+                            <xs:attribute name="order" type="unsignedByte-or-empty" use="optional"/>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="title" type="xs:string"/>
+							<xs:element name="subtitle" minOccurs="0"/>
+							<xs:element name="foreign_title" type="xs:string" minOccurs="0"/>
+							<xs:element name="language_1" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="language_2" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="language_3" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="document_urls" minOccurs="0">
+								<xs:complexType mixed="true">
+									<xs:sequence minOccurs="0">
+										<xs:element maxOccurs="unbounded" name="url">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute name="type" type="xs:string" use="required"/>
+														<xs:attribute name="position" type="unsignedByte-or-empty" use="optional"/>
+                            <xs:attribute name="id" type="unsignedInt-or-empty" use="optional"/>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="source_agency" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="parent_id" type="xs:string" use="optional"/>
+											<xs:attribute name="street_1" type="xs:string" use="optional"/>
+											<xs:attribute name="street_2" type="xs:string" use="optional"/>
+											<xs:attribute name="city" type="xs:string" use="optional"/>
+											<xs:attribute name="region" type="xs:string" use="optional"/>
+											<xs:attribute name="country_id" type="xs:string" use="optional"/>
+											<xs:attribute name="country_name" type="xs:string" use="optional"/>
+											<xs:attribute name="postal_code" type="xs:string" use="optional"/>
+											<xs:attribute name="site_url" type="xs:string" use="optional"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="source_data" type="xs:string" minOccurs="0"/>
+							<xs:element name="tris_files" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element maxOccurs="unbounded" name="tris_file">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute name="code" type="xs:string" use="optional"/>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="report_numbers" minOccurs="0">
+								<xs:complexType mixed="true">
+									<xs:sequence minOccurs="0">
+										<xs:element maxOccurs="unbounded" name="report_number">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute name="position" type="unsignedByte-or-empty" use="optional"/>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="contract_numbers" minOccurs="0">
+								<xs:complexType mixed="true">
+									<xs:sequence minOccurs="0">
+										<xs:element name="contract_number">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute name="position" type="unsignedByte-or-empty" use="optional"/>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="abstract" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="original" type="xs:string" use="optional"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="supplemental_notes" type="xs:string" minOccurs="0"/>
+							<xs:element name="terms" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element maxOccurs="unbounded" name="term">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute name="type" type="xs:string" use="required"/>
+														<xs:attribute name="code" type="xs:string" use="optional"/>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+              <xs:element name="dataset" minOccurs="0">
+                <xs:complexType mixed="true">
+                  <xs:sequence>
+                    <xs:element name="publishers" minOccurs="0">
+                      <xs:complexType>
+                        <xs:sequence minOccurs="0">
+                          <xs:element maxOccurs="unbounded" name="publisher">
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                  <xs:attribute name="street_1" type="xs:string" use="optional"/>
+                                  <xs:attribute name="street_2" type="xs:string" use="optional"/>
+                                  <xs:attribute name="city" type="xs:string" use="optional"/>
+                                  <xs:attribute name="region" type="xs:string" use="optional"/>
+                                  <xs:attribute name="country_name" type="xs:string" use="optional"/>
+                                  <xs:attribute name="postal_code" type="xs:string" use="optional"/>
+                                  <xs:attribute name="site_url" type="xs:string" use="optional"/>
+                                  <xs:attribute name="position" type="unsignedByte-or-empty" use="optional"/>
+                                </xs:extension>
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="version" type="xs:string" use="optional"/>
+                  <xs:attribute name="integrity-hash" type="xs:string" use="optional"/>
+                </xs:complexType>
+              </xs:element>
+							<xs:element name="index_terms" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element maxOccurs="unbounded" name="term">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute name="type" type="xs:string" use="required"/>
+														<xs:attribute name="code" type="xs:string" use="optional"/>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="subject_areas" minOccurs="0">
+								<xs:complexType mixed="true">
+									<xs:sequence minOccurs="0">
+										<xs:element maxOccurs="unbounded" name="subject_area">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute name="code" type="xs:string" use="optional"/>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="created_date" type="xs:string" minOccurs="0"/>
+							<xs:element name="created_by" type="xs:string" minOccurs="0"/>
+							<xs:element name="modified_date" type="xs:string" minOccurs="0"/>
+							<xs:element name="modified_by" type="xs:string" minOccurs="0"/>
+							<xs:element name="approved_date" type="xs:string" minOccurs="0"/>
+							<xs:element name="document" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+                    <xs:element name="media_type" minOccurs="0">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:string">
+                            <xs:attribute name="id" type="xs:string" use="optional"/>
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+										<xs:element name="pagination" type="xs:string" minOccurs="0"/>
+										<xs:element name="oclc" type="xs:string" minOccurs="0"/>
+										<xs:element name="chapter" type="xs:string" minOccurs="0"/>
+										<xs:element name="features" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element maxOccurs="unbounded" name="feature">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="is_editable" type="xs:string" use="optional"/>
+																	<xs:attribute name="is_countable" type="xs:string" use="optional"/>
+																	<xs:attribute name="supported" type="xs:string" use="optional"/>
+																	<xs:attribute name="count" type="xs:string" use="optional"/>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="authors" minOccurs="0">
+											<xs:complexType mixed="true">
+												<xs:sequence minOccurs="0">
+													<xs:element maxOccurs="unbounded" name="author">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+                                  <xs:attribute name="id" type="xs:unsignedInt" use="optional"/>
+																	<xs:attribute name="firstname" type="xs:string" use="optional"/>
+																	<xs:attribute name="middlename" type="xs:string" use="optional"/>
+																	<xs:attribute name="lastname" type="xs:string" use="optional"/>
+																	<xs:attribute name="suffix" type="xs:string" use="optional"/>
+																	<xs:attribute name="phone" type="xs:string" use="optional"/>
+																	<xs:attribute name="fax" type="xs:string" use="optional"/>
+																	<xs:attribute name="email" type="xs:string" use="optional"/>
+                                  <xs:attribute name="orcid" type="xs:string" use="optional"/>
+                                  <xs:attribute name="agency_affiliation_id" type="xs:string" use="optional"/>
+																	<xs:attribute name="agency_affiliation" type="xs:string" use="optional"/>
+																	<xs:attribute name="position" type="unsignedByte-or-empty" use="optional"/>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="discussers" minOccurs="0">
+											<xs:complexType mixed="true">
+												<xs:sequence minOccurs="0">
+													<xs:element name="discusser">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+                                  <xs:attribute name="id" type="xs:unsignedInt" use="optional"/>
+																	<xs:attribute name="firstname" type="xs:string" use="optional"/>
+																	<xs:attribute name="middlename" type="xs:string" use="optional"/>
+																	<xs:attribute name="lastname" type="xs:string" use="optional"/>
+																	<xs:attribute name="suffix" type="xs:string" use="optional"/>
+																	<xs:attribute name="phone" type="xs:string" use="optional"/>
+																	<xs:attribute name="fax" type="xs:string" use="optional"/>
+																	<xs:attribute name="email" type="xs:string" use="optional"/>
+                                  <xs:attribute name="orcid" type="xs:string" use="optional"/>
+                                  <xs:attribute name="agency_affiliation" type="xs:string" use="optional"/>
+																	<xs:attribute name="position" type="unsignedByte-or-empty" use="optional"/>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="monograph">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="corporate_authors" minOccurs="0">
+														<xs:complexType mixed="true">
+															<xs:sequence minOccurs="0">
+																<xs:element maxOccurs="unbounded" name="corporate_author">
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="xs:string">
+																				<xs:attribute name="street_1" type="xs:string" use="optional"/>
+																				<xs:attribute name="street_2" type="xs:string" use="optional"/>
+																				<xs:attribute name="city" type="xs:string" use="optional"/>
+																				<xs:attribute name="region" type="xs:string" use="optional"/>
+																				<xs:attribute name="country_name" type="xs:string" use="optional"/>
+																				<xs:attribute name="postal_code" type="xs:string" use="optional"/>
+																				<xs:attribute name="site_url" type="xs:string" use="optional"/>
+																				<xs:attribute name="position" type="unsignedByte-or-empty" use="optional"/>
+																			</xs:extension>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="editors" minOccurs="0">
+														<xs:complexType mixed="true">
+															<xs:sequence minOccurs="0">
+																<xs:element maxOccurs="unbounded" name="editor">
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="xs:string">
+                                        <xs:attribute name="id" type="xs:unsignedInt" use="optional"/>
+																				<xs:attribute name="firstname" type="xs:string" use="optional"/>
+																				<xs:attribute name="middlename" type="xs:string" use="optional"/>
+																				<xs:attribute name="lastname" type="xs:string" use="optional"/>
+																				<xs:attribute name="suffix" type="xs:string" use="optional"/>
+																				<xs:attribute name="phone" type="xs:string" use="optional"/>
+																				<xs:attribute name="fax" type="xs:string" use="optional"/>
+																				<xs:attribute name="email" type="xs:string" use="optional"/>
+                                        <xs:attribute name="orcid" type="xs:string" use="optional"/>
+																				<xs:attribute name="agency_affiliation" type="xs:string" use="optional"/>
+																				<xs:attribute name="position" type="unsignedByte-or-empty" use="optional"/>
+																			</xs:extension>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="conference" minOccurs="0">
+														<xs:complexType mixed="true">
+															<xs:sequence>
+																<xs:element name="sponsors" minOccurs="0">
+																	<xs:complexType>
+																		<xs:sequence minOccurs="0">
+																			<xs:element maxOccurs="unbounded" name="sponsor">
+																				<xs:complexType>
+																					<xs:simpleContent>
+																						<xs:extension base="xs:string">
+																							<xs:attribute name="street_1" type="xs:string" use="optional"/>
+																							<xs:attribute name="street_2" type="xs:string" use="optional"/>
+																							<xs:attribute name="city" type="xs:string" use="optional"/>
+																							<xs:attribute name="region" type="xs:string" use="optional"/>
+																							<xs:attribute name="country_name" type="xs:string" use="optional"/>
+																							<xs:attribute name="postal_code" type="xs:string" use="optional"/>
+																							<xs:attribute name="site_url" type="xs:string" use="optional"/>
+																						</xs:extension>
+																					</xs:simpleContent>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+															<xs:attribute name="city" type="xs:string" use="optional"/>
+															<xs:attribute name="region" type="xs:string" use="optional"/>
+															<xs:attribute name="country" type="xs:string" use="optional"/>
+															<xs:attribute name="start_date_year" type="xs:string" use="optional"/>
+															<xs:attribute name="start_date_month" type="xs:string" use="optional"/>
+															<xs:attribute name="start_date_day" type="xs:string" use="optional"/>
+															<xs:attribute name="start_date" type="xs:string" use="optional"/>
+															<xs:attribute name="end_date_year" type="xs:string" use="optional"/>
+															<xs:attribute name="end_date_month" type="xs:string" use="optional"/>
+															<xs:attribute name="end_date_day" type="xs:string" use="optional"/>
+															<xs:attribute name="end_date" type="xs:string" use="optional"/>
+															<xs:attribute name="countryname" type="xs:string" use="optional"/>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="serial" minOccurs="0">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="publisher" type="xs:string" use="optional"/>
+																	<xs:attribute name="editor" type="xs:string" use="optional"/>
+																	<xs:attribute name="issn" type="xs:string" use="optional"/>
+																	<xs:attribute name="eissn" type="xs:string" use="optional"/>
+																	<xs:attribute name="oclc" type="xs:string" use="optional"/>
+																	<xs:attribute name="serialurl" type="xs:string" use="optional"/>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="isbn" type="xs:string" minOccurs="0"/>
+													<xs:element name="publication_date" minOccurs="0">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="unsignedInt-or-empty">
+																	<xs:attribute name="year" type="unsignedShort-or-empty" use="optional"/>
+																	<xs:attribute name="month" type="unsignedByte-or-empty" use="optional"/>
+																	<xs:attribute name="day" type="unsignedByte-or-empty" use="optional"/>
+																	<xs:attribute name="approximate" type="xs:string" use="optional"/>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="volume" type="xs:string" minOccurs="0"/>
+													<xs:element name="issue" type="xs:string" minOccurs="0"/>
+													<xs:element name="edition" type="xs:string" minOccurs="0"/>
+													<xs:element name="period_covered" type="xs:string" minOccurs="0"/>
+													<xs:element name="availability_agencies" minOccurs="0">
+														<xs:complexType mixed="true">
+															<xs:sequence minOccurs="0">
+																<xs:element maxOccurs="unbounded" name="availability_agency">
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="xs:string">
+																				<xs:attribute name="street_1" type="xs:string" use="optional"/>
+																				<xs:attribute name="street_2" type="xs:string" use="optional"/>
+																				<xs:attribute name="city" type="xs:string" use="optional"/>
+																				<xs:attribute name="region" type="xs:string" use="optional"/>
+																				<xs:attribute name="country_name" type="xs:string" use="optional"/>
+																				<xs:attribute name="postal_code" type="xs:string" use="optional"/>
+																				<xs:attribute name="site_url" type="xs:string" use="optional"/>
+																				<xs:attribute name="part_number" type="xs:string" use="optional"/>
+																				<xs:attribute name="order_url" type="xs:string" use="optional"/>
+																				<xs:attribute name="position" type="unsignedByte-or-empty" use="optional"/>
+																			</xs:extension>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="components" minOccurs="0">
+														<xs:complexType mixed="true">
+															<xs:sequence minOccurs="0">
+																<xs:element maxOccurs="unbounded" name="component">
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="xs:string">
+																			</xs:extension>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+												<xs:attribute name="title" type="xs:string" use="optional"/>
+												<xs:attribute name="accession_number" type="xs:string" use="optional"/>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="project" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="rip_record" minOccurs="0"/>
+										<xs:element name="project_status" minOccurs="0"/>
+										<xs:element name="funding" minOccurs="0"/>
+										<xs:element name="deliverables" minOccurs="0"/>
+										<xs:element name="notice_date" minOccurs="0"/>
+										<xs:element name="start_date" minOccurs="0"/>
+										<xs:element name="expected_completion_date" minOccurs="0"/>
+										<xs:element name="actual_completion_date" minOccurs="0"/>
+										<xs:element name="performing_agencies" minOccurs="0">
+											<xs:complexType mixed="true">
+												<xs:sequence minOccurs="0">
+													<xs:element maxOccurs="unbounded" name="performing_agency">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="street_1" type="xs:string" use="optional"/>
+																	<xs:attribute name="street_2" type="xs:string" use="optional"/>
+																	<xs:attribute name="city" type="xs:string" use="optional"/>
+																	<xs:attribute name="region" type="xs:string" use="optional"/>
+																	<xs:attribute name="country_name" type="xs:string" use="optional"/>
+																	<xs:attribute name="postal_code" type="xs:string" use="optional"/>
+																	<xs:attribute name="site_url" type="xs:string" use="optional"/>
+																	<xs:attribute name="position" type="unsignedByte-or-empty" use="optional"/>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="funding_agencies" minOccurs="0">
+											<xs:complexType mixed="true">
+												<xs:sequence minOccurs="0">
+													<xs:element maxOccurs="unbounded" name="funding_agency">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="street_1" type="xs:string" use="optional"/>
+																	<xs:attribute name="street_2" type="xs:string" use="optional"/>
+																	<xs:attribute name="city" type="xs:string" use="optional"/>
+																	<xs:attribute name="region" type="xs:string" use="optional"/>
+																	<xs:attribute name="country_name" type="xs:string" use="optional"/>
+																	<xs:attribute name="postal_code" type="xs:string" use="optional"/>
+																	<xs:attribute name="site_url" type="xs:string" use="optional"/>
+																	<xs:attribute name="position" type="unsignedByte-or-empty" use="optional"/>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="responsible_individuals" minOccurs="0">
+											<xs:complexType mixed="true">
+												<xs:sequence minOccurs="0">
+													<xs:element maxOccurs="unbounded" name="responsible_individual">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+                                  <xs:attribute name="id" type="xs:unsignedInt" use="optional"/>
+																	<xs:attribute name="firstname" type="xs:string" use="optional"/>
+																	<xs:attribute name="middlename" type="xs:string" use="optional"/>
+																	<xs:attribute name="lastname" type="xs:string" use="optional"/>
+																	<xs:attribute name="suffix" type="xs:string" use="optional"/>
+																	<xs:attribute name="phone" type="xs:string" use="optional"/>
+																	<xs:attribute name="fax" type="xs:string" use="optional"/>
+																	<xs:attribute name="email" type="xs:string" use="optional"/>
+                                  <xs:attribute name="orcid" type="xs:string" use="optional"/>
+																	<xs:attribute name="agency_affiliation" type="xs:string" use="optional"/>
+																	<xs:attribute name="position" type="unsignedByte-or-empty" use="optional"/>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="investigators" minOccurs="0">
+											<xs:complexType mixed="true">
+												<xs:sequence minOccurs="0">
+													<xs:element maxOccurs="unbounded" name="investigator">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+                                  <xs:attribute name="id" type="xs:unsignedInt" use="optional"/>
+																	<xs:attribute name="firstname" type="xs:string" use="optional"/>
+																	<xs:attribute name="middlename" type="xs:string" use="optional"/>
+																	<xs:attribute name="lastname" type="xs:string" use="optional"/>
+																	<xs:attribute name="suffix" type="xs:string" use="optional"/>
+																	<xs:attribute name="phone" type="xs:string" use="optional"/>
+																	<xs:attribute name="fax" type="xs:string" use="optional"/>
+																	<xs:attribute name="email" type="xs:string" use="optional"/>
+                                  <xs:attribute name="orcid" type="xs:string" use="optional"/>
+																	<xs:attribute name="agency_affiliation" type="xs:string" use="optional"/>
+																	<xs:attribute name="position" type="unsignedByte-or-empty" use="optional"/>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+            <xs:attribute name="id" type="xs:unsignedInt" use="optional"/>
+						<xs:attribute name="type" type="xs:string" use="optional"/>
+						<xs:attribute name="timestamp" type="xs:string" use="optional"/>
+						<xs:anyAttribute namespace="##any" processContents="lax"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

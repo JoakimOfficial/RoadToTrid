@@ -1,0 +1,104 @@
+@model RoadToTrid.Data.Models.TridXmlModels.Bibcat.AvailabilityAgency
+
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<section class="card">
+    <div class="card-body">
+        @if (ViewBag.Saved == true)
+        {
+            <div class="alert alert-success" role="alert">Settings saved.</div>
+        }
+
+        <form asp-action="Settings" method="post" class="d-grid gap-3">
+            @Html.AntiForgeryToken()
+            <ul class="nav nav-tabs" id="settingsTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">
+                        <i class="bi bi-house-fill" aria-hidden="true"></i>
+                        Home
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">
+                        <i class="bi bi-person-fill" aria-hidden="true"></i>
+                        Profile
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">
+                        <i class="bi bi-telephone-fill" aria-hidden="true"></i>
+                        Contact
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="settingsTabsContent">
+                <div class="tab-pane fade show active pt-3" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+                    <div class="mb-3">
+                        <label asp-for="Text" class="form-label"></label>
+                        <input asp-for="Text" class="form-control" />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Street1" class="form-label"></label>
+                                <input asp-for="Street1" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="Street2" class="form-label"></label>
+                                <input asp-for="Street2" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="City" class="form-label"></label>
+                                <input asp-for="City" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="Region" class="form-label"></label>
+                                <input asp-for="Region" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="CountryName" class="form-label"></label>
+                                <input asp-for="CountryName" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="PostalCode" class="form-label"></label>
+                                <input asp-for="PostalCode" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="SiteUrl" class="form-label"></label>
+                                <input asp-for="SiteUrl" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="PartNumber" class="form-label"></label>
+                                <input asp-for="PartNumber" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="OrderUrl" class="form-label"></label>
+                                <input asp-for="OrderUrl" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="Position" class="form-label"></label>
+                                <input asp-for="Position" class="form-control" />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade pt-3" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                    <p class="mt-2">
+                        <b>This is some placeholder content the Profile tab's associated content.</b>
+                    </p>
+                </div>
+                <div class="tab-pane fade pt-3" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">
+                    <p class="mt-2">
+                        <b>This is some placeholder content the Contact tab's associated content.</b>
+                    </p>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

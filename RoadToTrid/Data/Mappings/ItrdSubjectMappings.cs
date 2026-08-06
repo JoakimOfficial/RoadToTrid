@@ -1,0 +1,53 @@
+﻿namespace RoadToTrid.Data.Mappings;
+
+public class ItrdSubjectMappings
+{
+    private static readonly Dictionary<string, string> itrdSubjects = new(){
+        { "10", "Economics and Administration" },
+        { "15", "Environment" },
+        { "20", "Design and Planning of Transport Infrastructure" },
+        { "21", "Planning of Transport Infrastructure" },
+        { "22", "Design of Pavements, Railways and Guideways" },
+        { "23", "Properties of Road Surfaces" },
+        { "24", "Design of Bridges and Retaining Walls" },
+        { "25", "Design of Tunnels" },
+        { "26", "Water Run-Off - Freeze-Thaw" },
+        { "30", "Materials" },
+        { "31", "Bituminous Binders and Materials" },
+        { "32", "Concrete" },
+        { "33", "Other Materials Used in Pavement Layers" },
+        { "34", "Steels and Metals" },
+        { "35", "Miscellaneous Materials" },
+        { "36", "Aggregates" },
+        { "40", "Soils and Rocks" },
+        { "41", "General Soil Surveys" },
+        { "42", "Soil Mechanics" },
+        { "43", "Rock Mechanics" },
+        { "50", "Construction and Supervision of Construction" },
+        { "51", "Earthworks and Soil Drainage" },
+        { "52", "Construction of Pavements, Railways and Guideways" },
+        { "53", "Construction of Bridges and Retaining Walls" },
+        { "54", "Construction of Tunnels" },
+        { "60", "Maintenance" },
+        { "61", "Equipment and Maintenance Methods" },
+        { "62", "Winter Maintenance" },
+        { "70", "Traffic and Transport" },
+        { "71", "Traffic Theory" },
+        { "72", "Traffic and Transport Planning" },
+        { "73", "Traffic Control" },
+        { "80", "Accident Studies" },
+        { "81", "Accident Statistics" },
+        { "82", "Accidents and Transport Infrastructure" },
+        { "83", "Accidents and the Human Factor" },
+        { "84", "Personal Injuries" },
+        { "85", "Safety Devices Used in Transport Infrastructure" },
+        { "90", "Vehicles (All Transport Modes)" },
+        { "91", "Vehicle Design and Safety" },
+        { "92", "Vehicle Comfort" },
+        { "94", "Vehicle Corrosion" },
+        { "95", "Vehicle Inspection" },
+        { "96", "Vehicle Operating Cost" },
+    };
+
+    public static Dictionary<string, string> ItrdSubjects => itrdSubjects;
+}
