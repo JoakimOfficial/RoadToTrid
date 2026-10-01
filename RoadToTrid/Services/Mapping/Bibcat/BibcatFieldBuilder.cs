@@ -40,14 +40,14 @@ public class BibcatFieldBuilder
         return StringHelper.EncodeSpecialCharsForXml(titleTexts[0].Trim());
     }
 
-    public static Document CreateDocument(List<MarcDataFieldModel> dataFieldEntries, string tag)
+    public static Document CreateDocument(List<MarcDataFieldModel> dataFieldEntries, string tag, AvailabilityAgency availabilityAgency)
     {
         Document document = new();
 
         document.MediaType = StringHelper.GetFirstCharacter(FieldProcessingHelper.GetSingleSubfieldTextByTag(dataFieldEntries, "007"));
         document.Pagination = StringHelper.ConvertSwedishPaginationToEnglish(FieldProcessingHelper.GetSingleSubfieldTextByTag(dataFieldEntries, "300"));
         document.Authors = CreateAuthors(dataFieldEntries);
-        document.Monograph = CreateMonograph(dataFieldEntries);
+        document.Monograph = CreateMonograph(dataFieldEntries, availabilityAgency);
 
         return document;
     }
@@ -80,7 +80,7 @@ public class BibcatFieldBuilder
         return authors;
     }
 
-    public static Monograph CreateMonograph(List<MarcDataFieldModel> dataFieldEntries)
+    public static Monograph CreateMonograph(List<MarcDataFieldModel> dataFieldEntries, AvailabilityAgency availabilityAgency)
     {
         Monograph monograph = new();
 
@@ -90,7 +90,7 @@ public class BibcatFieldBuilder
         monograph.Isbn = CreateIsbn(dataFieldEntries);
         monograph.PublicationDate = CreatePublicationDate(dataFieldEntries);
         monograph.Issue = CreateIssue(dataFieldEntries);
-        monograph.AvailabilityAgencies = CreateAvailabilityAgencies();
+        monograph.AvailabilityAgencies = CreateAvailabilityAgencies(availabilityAgency);
 
         monograph.Title = "";
         monograph.AccessionNumber = "";
@@ -151,11 +151,24 @@ public class BibcatFieldBuilder
         return issue;
     }
 
-    public static List<AvailabilityAgency> CreateAvailabilityAgencies()
+    public static List<AvailabilityAgency> CreateAvailabilityAgencies(AvailabilityAgency availabilityAgency)
     {
         List<AvailabilityAgency> availabilityAgencies = [];
 
-        availabilityAgencies.Add(new AvailabilityAgency());
+        availabilityAgencies.Add(new AvailabilityAgency
+        {
+            Street1 = availabilityAgency.Street1,
+            Street2 = availabilityAgency.Street2,
+            City = availabilityAgency.City,
+            Region = availabilityAgency.Region,
+            CountryName = availabilityAgency.CountryName,
+            PostalCode = availabilityAgency.PostalCode,
+            SiteUrl = availabilityAgency.SiteUrl,
+            PartNumber = availabilityAgency.PartNumber,
+            OrderUrl = availabilityAgency.OrderUrl,
+            Position = availabilityAgency.Position,
+            Text = availabilityAgency.Text,
+        });
 
         return availabilityAgencies;
     }

@@ -11,11 +11,19 @@ namespace RoadToTrid.Services.Mapping.Bibcat;
 
 public class BibcatRecordMappingService : IRecordMappingService
 {
+    private readonly ApplicationSettingsService _applicationSettingsService;
+
+    public BibcatRecordMappingService(ApplicationSettingsService applicationSettingsService)
+    {
+        _applicationSettingsService = applicationSettingsService;
+    }
+
     public DatabaseSource Source => DatabaseSource.Bibliotekskatalogen;
 
     public IRecords MapAll(MarcCollectionModel collection, List<InvalidAbstractModel> invalidAbstracts)
     {
         BibcatRecords bibcatRecords = new();
+        AvailabilityAgency availabilityAgency = _applicationSettingsService.GetAvailabilityAgency();
 
         foreach (MarcRecordModel marcRecord in collection.Records)
         {
@@ -28,7 +36,7 @@ public class BibcatRecordMappingService : IRecordMappingService
             {
                 Title = BibcatFieldBuilder.CreateTitle(dataFieldEntries, "245"),
                 ForeignTitle = BibcatFieldBuilder.CreateForeignTitle(dataFieldEntries, "246"),
-                Document = BibcatFieldBuilder.CreateDocument(dataFieldEntries, "007"),
+                Document = BibcatFieldBuilder.CreateDocument(dataFieldEntries, "007", availabilityAgency),
 
                 RecordNo = RecordFieldBuilder.CreateRecordNoAttribute(dataFieldEntries),
                 RecordType = RecordFieldBuilder.CreateRecordType(dataFieldEntries),

@@ -1,4 +1,5 @@
 ﻿using RoadToTrid.Data.Constants;
+using RoadToTrid.Data.Enums;
 using RoadToTrid.Data.Mappings;
 using RoadToTrid.Data.Models;
 using RoadToTrid.Data.Models.MarcXmlModels;
@@ -6,6 +7,7 @@ using RoadToTrid.Data.Models.TridXmlModels.Shared;
 using RoadToTrid.Helpers;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace RoadToTrid.Services.Mapping.Shared;
 
@@ -155,7 +157,31 @@ public class RecordFieldBuilder
 
         if (abstractTexts.Count == 2)
         {
-            abstractText = language1.Code == "eng" ? abstractTexts[0] : abstractTexts[1];
+            int expectedEnglishIndex = language1.Code == "eng" ? 0 : 1;
+            int? detectedEnglishIndex = DetectLikelyEnglishAbstractIndex(abstractTexts);
+
+            if (detectedEnglishIndex.HasValue)
+            {
+                abstractText = abstractTexts[detectedEnglishIndex.Value];
+
+                if (detectedEnglishIndex.Value != expectedEnglishIndex)
+                {
+                    invalidAbstracts.Add(new InvalidAbstractModel
+                    {
+                        AbstractText = abstractText,
+                        RecordNumber = CreateRecordNoAttribute(dataFieldEntries),
+                        WarningType = AbstractWarningType.LanguageMismatch,
+                        ExpectedLanguageCode = "eng",
+                        DetectedLanguageCode = "eng",
+                        ExpectedAbstractNumber = expectedEnglishIndex + 1,
+                        DetectedAbstractNumber = detectedEnglishIndex.Value + 1,
+                    });
+                }
+            }
+            else
+            {
+                abstractText = abstractTexts[expectedEnglishIndex];
+            }
         }
         else if (abstractTexts.Count == 1 && language1.Code == "eng")
         {
@@ -196,6 +222,9 @@ public class RecordFieldBuilder
                 Indexes = illegalIndexes,
                 AbstractText = abstractText,
                 RecordNumber = CreateRecordNoAttribute(dataFieldEntries),
+                WarningType = string.IsNullOrEmpty(abstractText)
+                    ? AbstractWarningType.MissingEnglishAbstract
+                    : AbstractWarningType.RemovedInvalidCharacters,
             };
 
             invalidAbstracts.Add(invalidAbstract);
@@ -210,6 +239,54 @@ public class RecordFieldBuilder
         };
 
         return englishAbstract;
+    }
+
+    private static int? DetectLikelyEnglishAbstractIndex(List<string> abstractTexts)
+    {
+        if (abstractTexts.Count != 2)
+        {
+            return null;
+        }
+
+        int firstScore = ScoreEnglishLikelihood(abstractTexts[0]);
+        int secondScore = ScoreEnglishLikelihood(abstractTexts[1]);
+
+        if (Math.Abs(firstScore - secondScore) < 3)
+        {
+            return null;
+        }
+
+        return firstScore > secondScore ? 0 : 1;
+    }
+
+    private static int ScoreEnglishLikelihood(string text)
+    {
+        string normalized = text.ToLowerInvariant();
+        string[] tokens = Regex.Split(normalized, @"[^\p{L}]+")
+            .Where(token => token.Length > 0)
+            .ToArray();
+
+        HashSet<string> englishWords =
+        [
+            "the", "and", "of", "to", "in", "for", "with", "that", "this", "is",
+            "are", "as", "on", "by", "from", "an", "be", "it", "or", "which",
+        ];
+
+        HashSet<string> swedishWords =
+        [
+            "och", "att", "det", "som", "en", "ett", "är", "för", "med", "av",
+            "på", "till", "i", "om", "den", "de", "har", "kan", "där", "samt",
+        ];
+
+        int englishScore = tokens.Count(englishWords.Contains);
+        int swedishScore = tokens.Count(swedishWords.Contains);
+
+        if (normalized.Any(character => character is 'å' or 'ä' or 'ö'))
+        {
+            swedishScore += 4;
+        }
+
+        return englishScore - swedishScore;
     }
 
     public static List<SubjectArea> CreateSubjectAreas(List<MarcDataFieldModel> dataFieldEntries, string tag)

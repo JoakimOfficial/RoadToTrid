@@ -1,0 +1,116 @@
+@page "/Settings"
+@page "/Home/Settings"
+@inject ApplicationSettingsService SettingsService
+<PageTitle>Settings - Road to Trid</PageTitle>
+@if (saved) { <div class="alert alert-success" role="status">Settings saved.</div> }
+@if (!string.IsNullOrWhiteSpace(errorMessage)) { <div class="alert alert-danger" role="alert">@errorMessage</div> }
+<EditForm Model="settings" OnSubmit="Save" FormName="settings">
+    <h1 class="h5">Availability Agency</h1>
+    <div class="mb-3">
+        <label for="agency-Text" class="form-label">Text</label>
+        <InputText id="agency-Text" class="form-control" @bind-Value="settings.AvailabilityAgency.Text" />
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="agency-Street1" class="form-label">Street1</label>
+                <InputText id="agency-Street1" class="form-control" @bind-Value="settings.AvailabilityAgency.Street1" />
+            </div>
+            <div class="mb-3">
+                <label for="agency-Street2" class="form-label">Street2</label>
+                <InputText id="agency-Street2" class="form-control" @bind-Value="settings.AvailabilityAgency.Street2" />
+            </div>
+            <div class="mb-3">
+                <label for="agency-City" class="form-label">City</label>
+                <InputText id="agency-City" class="form-control" @bind-Value="settings.AvailabilityAgency.City" />
+            </div>
+            <div class="mb-3">
+                <label for="agency-Region" class="form-label">Region</label>
+                <InputText id="agency-Region" class="form-control" @bind-Value="settings.AvailabilityAgency.Region" />
+            </div>
+            <div class="mb-3">
+                <label for="agency-CountryName" class="form-label">CountryName</label>
+                <InputText id="agency-CountryName" class="form-control" @bind-Value="settings.AvailabilityAgency.CountryName" />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="agency-PostalCode" class="form-label">PostalCode</label>
+                <InputText id="agency-PostalCode" class="form-control" @bind-Value="settings.AvailabilityAgency.PostalCode" />
+            </div>
+            <div class="mb-3">
+                <label for="agency-SiteUrl" class="form-label">SiteUrl</label>
+                <InputText id="agency-SiteUrl" class="form-control" @bind-Value="settings.AvailabilityAgency.SiteUrl" />
+            </div>
+            <div class="mb-3">
+                <label for="agency-PartNumber" class="form-label">PartNumber</label>
+                <InputText id="agency-PartNumber" class="form-control" @bind-Value="settings.AvailabilityAgency.PartNumber" />
+            </div>
+            <div class="mb-3">
+                <label for="agency-OrderUrl" class="form-label">OrderUrl</label>
+                <InputText id="agency-OrderUrl" class="form-control" @bind-Value="settings.AvailabilityAgency.OrderUrl" />
+            </div>
+            <div class="mb-3">
+                <label for="agency-Position" class="form-label">Position</label>
+                <InputText id="agency-Position" class="form-control" @bind-Value="settings.AvailabilityAgency.Position" />
+            </div>
+        </div>
+    </div>
+    <hr />
+    <h2 class="h5">AI Text Check</h2>
+    <div class="form-check form-switch mb-3">
+        <InputCheckbox id="ai-enabled" class="form-check-input" role="switch" @bind-Value="settings.TextQualityReview.IsEnabled" />
+        <label for="ai-enabled" class="form-check-label">IsEnabled</label>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label for="ai-OllamaUrl" class="form-label">OllamaUrl</label>
+            <InputText id="ai-OllamaUrl" class="form-control" @bind-Value="settings.TextQualityReview.OllamaUrl" />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="ai-Model" class="form-label">Model</label>
+            <InputText id="ai-Model" class="form-control" @bind-Value="settings.TextQualityReview.Model" />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="ai-level" class="form-label">WarningLevel</label>
+            <InputSelect id="ai-level" class="form-select" @bind-Value="settings.TextQualityReview.WarningLevel">
+                @foreach (var level in Enum.GetValues<TextQualityWarningLevel>()) { <option value="@level">@level</option> }
+            </InputSelect>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="ai-MaxRecordsPerFile" class="form-label">MaxRecordsPerFile</label>
+            <InputNumber id="ai-MaxRecordsPerFile" class="form-control" min="0" max="500" @bind-Value="settings.TextQualityReview.MaxRecordsPerFile" />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="ai-TimeoutSeconds" class="form-label">TimeoutSeconds</label>
+            <InputNumber id="ai-TimeoutSeconds" class="form-control" min="3" max="120" @bind-Value="settings.TextQualityReview.TimeoutSeconds" />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="ai-MaxSecondsPerFile" class="form-label">MaxSecondsPerFile</label>
+            <InputNumber id="ai-MaxSecondsPerFile" class="form-control" min="5" max="600" @bind-Value="settings.TextQualityReview.MaxSecondsPerFile" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary"><i class="bi bi-save" aria-hidden="true"></i> Save</button>
+</EditForm>
+
+@code {
+    private ApplicationSettings settings = new();
+    private bool saved;
+    private string? errorMessage;
+    protected override void OnInitialized() => settings = SettingsService.GetSettings();
+    private void Save(EditContext context)
+    {
+        saved = false;
+        errorMessage = null;
+        if (!context.Validate()) return;
+        try
+        {
+            SettingsService.SaveSettings(settings);
+            saved = true;
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            errorMessage = "Settings could not be saved. Check that the application has write permission to settings.json.";
+        }
+    }
+}

@@ -1,0 +1,24 @@
+{
+  "availabilityAgency": {
+    "street1": null,
+    "street2": null,
+    "city": "Link\u00F6ping",
+    "region": null,
+    "countryName": null,
+    "postalCode": null,
+    "siteUrl": "https://bibliotek.vti.se/",
+    "partNumber": null,
+    "orderUrl": "http://www.vti.se/en/library",
+    "position": null,
+    "text": "Swedish National Road and Transport Research Institute (VTI)"
+  },
+  "textQualityReview": {
+    "isEnabled": true,
+    "ollamaUrl": "http://localhost:11434",
+    "model": "llama3.1",
+    "warningLevel": "Warning",
+    "maxRecordsPerFile": 20,
+    "timeoutSeconds": 15,
+    "maxSecondsPerFile": 60
+  }
+}

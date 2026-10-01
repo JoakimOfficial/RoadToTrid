@@ -13,16 +13,18 @@ public class XmlProcessingService
     private readonly XmlFileService _fileService;
     private readonly XmlSerializationService _serializationService;
     private readonly MarcToTridMappingService _mappingService;
+    private readonly TextQualityReviewService _textQualityReviewService;
 
     public List<XmlFileProcessingModel> LoadedFiles { get; set; } = [];
 
     public bool ShowInvalidFileModal { get; set; } = false;
 
-    public XmlProcessingService(XmlFileService fileService, XmlSerializationService serializationService, MarcToTridMappingService mappingService)
+    public XmlProcessingService(XmlFileService fileService, XmlSerializationService serializationService, MarcToTridMappingService mappingService, TextQualityReviewService textQualityReviewService)
     {
         _fileService = fileService;
         _serializationService = serializationService;
         _mappingService = mappingService;
+        _textQualityReviewService = textQualityReviewService;
     }
 
     public void LoadMultipleFiles(IReadOnlyCollection<IFormFile> files)
@@ -72,6 +74,11 @@ public class XmlProcessingService
             .Any(df => df.Tag == "651") == true ? DatabaseSource.Projektdatabasen : DatabaseSource.Bibliotekskatalogen;
 
         IRecords tridRecords = _mappingService.Transform(file.DeserializedMarcCollection, file.Source, file.InvalidAbstracts);
+
+        if (tridRecords is BibcatRecords bibcatRecords)
+        {
+            await _textQualityReviewService.ReviewBibcatRecordsAsync(bibcatRecords, file.TextQualityWarnings);
+        }
 
         SetConvertedTridRecordsOnModel(file, tridRecords);
 

@@ -1,0 +1,29 @@
+@foreach (var warning in Warnings)
+{
+    <div class="alert @(warning.Level == TextQualityWarningLevel.Warning ? "alert-warning" : "alert-info")" role="alert">
+        <h3 class="h6">@(warning.Level == TextQualityWarningLevel.Warning ? "AI Text Warning" : "AI Text Information")</h3>
+        <strong>
+            @if (!string.IsNullOrWhiteSpace(warning.RecordNumber))
+            {
+                <text>Record @warning.RecordNumber: </text>
+            }
+            @warning.Message
+        </strong>
+        @if (warning.Issues.Count > 0)
+        {
+            <ul class="mb-0 mt-2">
+                @foreach (var issue in warning.Issues) { <li>@issue</li> }
+            </ul>
+        }
+    </div>
+    @if (!string.IsNullOrWhiteSpace(warning.SuggestedText))
+    {
+        <div class="border rounded p-3 mb-3">
+            <p>@warning.SuggestedText</p>
+            <CopyText Text="@warning.SuggestedText" />
+        </div>
+    }
+}
+@code {
+    [Parameter, EditorRequired] public IReadOnlyList<TextQualityWarningModel> Warnings { get; set; } = [];
+}

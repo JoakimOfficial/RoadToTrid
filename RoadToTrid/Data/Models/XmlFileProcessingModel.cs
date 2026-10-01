@@ -28,4 +28,5 @@ public class XmlFileProcessingModel
     public DateTime? ProcessedTime { get; set; }
 
     public List<InvalidAbstractModel> InvalidAbstracts { get; set; } = [];
+    public List<TextQualityWarningModel> TextQualityWarnings { get; set; } = [];
 }

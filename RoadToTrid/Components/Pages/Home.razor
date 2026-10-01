@@ -1,0 +1,161 @@
+@page "/"
+@page "/Home"
+@page "/Home/Index"
+@inject XmlFileService FileService
+@inject XmlProcessingService ProcessingService
+@inject IJSRuntime JS
+@inject ILogger<Home> Logger
+
+<PageTitle>Home - Road to Trid</PageTitle>
+<section class="mb-3">
+    <h1 class="h5">Instructions</h1>
+    <p class="mb-3">Upload one or more XML files from Koha. The file(s) will be transformed into new XML file(s) for export to TRID.</p>
+    @if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">@errorMessage</div>
+    }
+    <div class="d-grid gap-3">
+        <InputFile class="form-control" OnChange="SelectFiles" multiple accept=".xml" disabled="@isProcessing" />
+        <div>
+            <button type="button" class="btn btn-primary upload-button" disabled="@(isProcessing || selectedFiles.Count == 0)" @onclick="UploadAsync">
+                <i class="bi bi-upload" aria-hidden="true"></i> @(isProcessing ? "Processing..." : "Upload")
+            </button>
+        </div>
+    </div>
+</section>
+
+<div class="accordion" aria-live="polite">
+    @for (var i = 0; i < files.Count; i++)
+    {
+        var file = files[i];
+        var index = i;
+        var expanded = expandedFiles.Contains(index);
+        var hasWarnings = file.InvalidAbstracts.Count > 0 || file.TextQualityWarnings.Any(w => w.Level == TextQualityWarningLevel.Warning);
+        var statusClass = file.Status == FileProcessingStatus.Done ? (hasWarnings ? "text-warning" : "text-success") : file.Status == FileProcessingStatus.Failed ? "text-danger" : "text-secondary";
+        <div class="accordion-item" @key="file">
+            <h2 class="accordion-header">
+                <button class="accordion-button @(expanded ? "" : "collapsed")" type="button" aria-expanded="@expanded" aria-controls="file-content-@index" @onclick="() => ToggleFile(index)">
+                    <span class="file-title">
+                        <span>@file.InputFileName</span><span class="text-secondary">(@file.InputFileSize kb)</span>
+                        <span class="@statusClass">
+                            @if (file.Status == FileProcessingStatus.Processing) { <span class="spinner-border spinner-border-sm" aria-hidden="true"></span> }
+                            else if (file.Status == FileProcessingStatus.Failed) { <i class="bi bi-x-circle-fill" aria-hidden="true"></i> }
+                            else if (file.Status == FileProcessingStatus.Done) { <i class="bi @(hasWarnings ? "bi-exclamation-triangle-fill" : "bi-check-square-fill")" aria-hidden="true"></i> }
+                            @file.Status
+                        </span>
+                    </span>
+                </button>
+            </h2>
+            <div id="file-content-@index" class="accordion-collapse collapse @(expanded ? "show" : "")">
+                <div class="accordion-body">
+                    @if (file.Status == FileProcessingStatus.Failed)
+                    {
+                        <div class="alert alert-danger" role="alert"><h3 class="h6">Something went wrong</h3><p class="mb-0">@file.ErrorMessage</p></div>
+                    }
+                    @if (file.Status == FileProcessingStatus.Done)
+                    {
+                        <div class="alert alert-success d-flex flex-wrap justify-content-between align-items-center gap-2">
+                            <strong>Converted file: @file.OutputFileName</strong>
+                            <button type="button" class="btn btn-outline-success" @onclick="() => DownloadAsync(file)"><i class="bi bi-download" aria-hidden="true"></i> Download</button>
+                        </div>
+                        <AbstractWarnings Warnings="file.InvalidAbstracts" />
+                        <TextQualityWarnings Warnings="file.TextQualityWarnings" />
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private const int MaxFiles = 5;
+    private const long MaxFileSize = 3 * 1024 * 1024;
+    private IReadOnlyList<IBrowserFile> selectedFiles = [];
+    private readonly List<XmlFileProcessingModel> files = [];
+    private readonly HashSet<int> expandedFiles = [];
+    private bool isProcessing;
+    private string? errorMessage;
+
+    private void SelectFiles(InputFileChangeEventArgs args)
+    {
+        errorMessage = null;
+        selectedFiles = [];
+        if (args.FileCount > MaxFiles)
+        {
+            errorMessage = $"You tried to upload {args.FileCount} files, but only {MaxFiles} files are allowed at a time.";
+            return;
+        }
+        var selection = args.GetMultipleFiles(MaxFiles);
+        if (selection.Any(f => !f.Name.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)))
+        {
+            errorMessage = "Only XML files are allowed. Please check the file format and try again.";
+            return;
+        }
+        selectedFiles = selection;
+    }
+
+    private async Task UploadAsync()
+    {
+        if (isProcessing || selectedFiles.Count == 0) return;
+        isProcessing = true;
+        errorMessage = null;
+        files.Clear();
+        expandedFiles.Clear();
+        try
+        {
+            foreach (var browserFile in selectedFiles)
+            {
+                var file = new XmlFileProcessingModel { InputFileName = browserFile.Name, InputFileSize = browserFile.Size / 1024, Status = FileProcessingStatus.Processing };
+                files.Add(file);
+                expandedFiles.Add(files.Count - 1);
+                await InvokeAsync(StateHasChanged);
+                try
+                {
+                    if (browserFile.Size > MaxFileSize)
+                    {
+                        file.Status = FileProcessingStatus.Failed;
+                        file.ErrorMessage = "The XML file is too large. The maximum size is 3 MB.";
+                        continue;
+                    }
+                    // Buffer the browser upload so the existing conversion services can read it as an IFormFile.
+                    await using var input = browserFile.OpenReadStream(MaxFileSize);
+                    using var buffer = new MemoryStream();
+                    await input.CopyToAsync(buffer);
+                    buffer.Position = 0;
+                    var upload = new FormFile(buffer, 0, buffer.Length, "files", browserFile.Name);
+                    file.InputFile = upload;
+                    file.OutputFileName = FileService.LoadXmlFile(upload).OutputFileName;
+                    await ProcessingService.ProcessXmlFile(file);
+                }
+                catch (Exception exception)
+                {
+                    Logger.LogError(exception, "Failed to process XML file {FileName}", browserFile.Name);
+                    file.Status = FileProcessingStatus.Failed;
+                    file.ErrorMessage = "The file could not be processed. Please try again.";
+                }
+                finally
+                {
+                    file.InputFile = null;
+                    await InvokeAsync(StateHasChanged);
+                }
+            }
+        }
+        finally { isProcessing = false; }
+    }
+
+    private void ToggleFile(int index)
+    {
+        if (!expandedFiles.Add(index)) expandedFiles.Remove(index);
+    }
+
+    private async Task DownloadAsync(XmlFileProcessingModel file)
+    {
+        try
+        {
+            using var stream = new MemoryStream(file.OutPutXmlFileBytes);
+            using var reference = new DotNetStreamReference(stream);
+            await JS.InvokeVoidAsync("roadToTrid.downloadFile", file.OutputFileName, reference);
+        }
+        catch (JSException) { errorMessage = "The file could not be downloaded. Please try again."; }
+    }
+}

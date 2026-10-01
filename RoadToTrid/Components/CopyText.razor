@@ -1,0 +1,17 @@
+@inject IJSRuntime JS
+<button type="button" class="btn btn-outline-secondary" @onclick="CopyAsync">
+    <i class="bi bi-clipboard" aria-hidden="true"></i> @label
+</button>
+@code {
+    [Parameter, EditorRequired] public string Text { get; set; } = string.Empty;
+    private string label = "Copy";
+    private async Task CopyAsync()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("roadToTrid.copyText", Text);
+            label = "Copied";
+        }
+        catch (JSException) { label = "Copy failed"; }
+    }
+}

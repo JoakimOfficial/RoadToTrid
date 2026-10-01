@@ -103,6 +103,92 @@ h6,
   gap: .5rem;
 }
 
+.btn.upload-button {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  min-height: 2.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: var(--vti-deep-green);
+  background-image: none;
+  border-color: var(--vti-deep-green);
+}
+
+.btn.upload-button:hover,
+.btn.upload-button:focus,
+.btn.upload-button:active {
+  color: #ffffff;
+  background-color: #003f49;
+  border-color: #003f49;
+}
+
+.btn.upload-button:disabled {
+  opacity: 1;
+  color: #ffffff;
+  background-color: #5c7277;
+  border-color: #5c7277;
+}
+
+#blazor-error-ui {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 1rem;
+  background: #fff3cd;
+  z-index: 1000;
+}
+
+.startup-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: grid;
+  place-items: center;
+  background: #ffffff;
+  color: var(--vti-deep-green);
+}
+
+.startup-loader[hidden],
+.startup-loader [hidden] {
+  display: none !important;
+}
+
+.startup-loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.startup-loader-spinner {
+  width: 5rem;
+  height: 5rem;
+  border-width: .4rem;
+}
+
+.startup-loader-title {
+  font-family: "VTI Space Grotesk", var(--bs-font-sans-serif);
+  font-size: 1.5rem;
+}
+
+#blazor-error-ui .dismiss {
+  float: right;
+  background: transparent;
+  border: 0;
+}
+
+@media (max-width: 575px) {
+  .app-nav .app-shell { flex-wrap: wrap; gap: .5rem; }
+  .navbar-brand { font-size: 1.5rem; }
+  .nav-link span { margin-left: .25rem; }
+  .accordion-body { overflow-wrap: anywhere; }
+}
+
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
   color: var(--bs-secondary-color);
   text-align: end;

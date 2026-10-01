@@ -1,0 +1,49 @@
+@using System.Globalization
+@foreach (var warning in Warnings)
+{
+    <div class="alert alert-warning" role="alert">
+        @if (warning.WarningType == AbstractWarningType.LanguageMismatch)
+        {
+            <h3 class="h6">Abstract Language Mismatch</h3>
+            <strong>Record @warning.RecordNumber has abstract language order that does not match the record language metadata.
+                Expected English abstract at position @warning.ExpectedAbstractNumber, but position @warning.DetectedAbstractNumber looks more likely to be English.</strong>
+        }
+        else if (warning.WarningType == AbstractWarningType.MissingEnglishAbstract || string.IsNullOrWhiteSpace(warning.AbstractText))
+        {
+            <h3 class="h6">Missing Abstract</h3>
+            <strong>Record @warning.RecordNumber does not contain an English abstract and has been included with an empty abstract.</strong>
+        }
+        else
+        {
+            <h3 class="h6">Removed Abstract</h3>
+            <strong>In record @warning.RecordNumber, the abstract has been removed due to the presence of invalid character(s):</strong>
+        }
+    </div>
+    @if (warning.WarningType == AbstractWarningType.RemovedInvalidCharacters && !string.IsNullOrWhiteSpace(warning.AbstractText))
+    {
+        <div class="border rounded p-3 mb-3">
+            <p>
+                @{
+                    var enumerator = StringInfo.GetTextElementEnumerator(warning.AbstractText);
+                    var index = 0;
+                    while (enumerator.MoveNext())
+                    {
+                        if (warning.Indexes.Contains(index))
+                        {
+                            <span class="text-danger">@enumerator.GetTextElement()</span>
+                        }
+                        else
+                        {
+                            @enumerator.GetTextElement()
+                        }
+                        index++;
+                    }
+                }
+            </p>
+            <CopyText Text="@warning.AbstractText" />
+        </div>
+    }
+}
+@code {
+    [Parameter, EditorRequired] public IReadOnlyList<InvalidAbstractModel> Warnings { get; set; } = [];
+}
